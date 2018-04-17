@@ -64,7 +64,7 @@ keepoutliers = ('--keepoutliers' in   [ff for ff in sys.argv[1:] if ff[0:1] == '
 keepsec = ('--keepsec' in   [ff for ff in sys.argv[1:] if ff[0:1] == '-'])
 
 for filepath in [ff for ff in sys.argv[1:] if ff[0:1] != '-']:
-    my_roh = roh.Roh.from_file(filepath).header;
+    my_roh = roh.Roh.from_file(filepath);
 
     ## Avaspec generates the x-axis exactly this weird way
     print(dir(my_roh))

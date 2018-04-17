@@ -12,36 +12,28 @@ class Roh(KaitaiStruct):
         self._io = _io
         self._parent = _parent
         self._root = _root if _root else self
-        self.header = self._root.Header(self._io, self, self._root)
+        self.unknown1 = self._io.read_f4le()
+        self.wlintercept = self._io.read_f4le()
+        self.wlx1 = self._io.read_f4le()
+        self.wlx2 = self._io.read_f4le()
+        self.wlx3 = self._io.read_f4le()
+        self.wlx4 = self._io.read_f4le()
+        self.unknown2 = [None] * (9)
+        for i in range(9):
+            self.unknown2[i] = self._io.read_f4le()
 
-    class Header(KaitaiStruct):
-        def __init__(self, _io, _parent=None, _root=None):
-            self._io = _io
-            self._parent = _parent
-            self._root = _root if _root else self
-            self.unknown1 = self._io.read_f4le()
-            self.wlintercept = self._io.read_f4le()
-            self.wlx1 = self._io.read_f4le()
-            self.wlx2 = self._io.read_f4le()
-            self.wlx3 = self._io.read_f4le()
-            self.wlx4 = self._io.read_f4le()
-            self.unknown2 = [None] * (9)
-            for i in range(9):
-                self.unknown2[i] = self._io.read_f4le()
+        self.ipixfirst = self._io.read_f4le()
+        self.ipixlast = self._io.read_f4le()
+        self.unknown3 = [None] * (4)
+        for i in range(4):
+            self.unknown3[i] = self._io.read_f4le()
 
-            self.ipixfirst = self._io.read_f4le()
-            self.ipixlast = self._io.read_f4le()
-            self.unknown3 = [None] * (4)
-            for i in range(4):
-                self.unknown3[i] = self._io.read_f4le()
+        self.spectrum = [None] * (((int(self.ipixlast) - int(self.ipixfirst)) - 1))
+        for i in range(((int(self.ipixlast) - int(self.ipixfirst)) - 1)):
+            self.spectrum[i] = self._io.read_f4le()
 
-            self.spectrum = [None] * (((int(self.ipixlast) - int(self.ipixfirst)) - 1))
-            for i in range(((int(self.ipixlast) - int(self.ipixfirst)) - 1)):
-                self.spectrum[i] = self._io.read_f4le()
-
-            self.integration_ms = self._io.read_f4le()
-            self.averaging = self._io.read_f4le()
-            self.pixel_smoothing = self._io.read_f4le()
-
+        self.integration_ms = self._io.read_f4le()
+        self.averaging = self._io.read_f4le()
+        self.pixel_smoothing = self._io.read_f4le()
 
 
