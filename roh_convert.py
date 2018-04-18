@@ -67,7 +67,6 @@ for filepath in [ff for ff in sys.argv[1:] if ff[0:1] != '-']:
     my_roh = roh.Roh.from_file(filepath);
 
     ## Avaspec generates the x-axis exactly this weird way
-    print(dir(my_roh))
     x0 = np.arange(int(my_roh.ipixfirst)+2, int(my_roh.ipixlast)+1)  
     x  = my_roh.wlintercept + x0*my_roh.wlx1 + x0**2 *my_roh.wlx2 + x0**3 *my_roh.wlx3 + x0**4 *my_roh.wlx4
     print('my_roh.integration_ms ', my_roh.integration_ms )
@@ -122,7 +121,11 @@ for filepath in [ff for ff in sys.argv[1:] if ff[0:1] != '-']:
             dest_dirname = os.path.join(dirname, 'orig')
             if not os.path.isdir(dest_dirname): os.makedirs(dest_dirname)
             os.rename(filepath, os.path.join(dest_dirname, filename))
-            os.rename(filepath[:-3]+'RCM', os.path.join(dest_dirname, filename[:-3]+'RCM'))
+            rcmfilename = filepath[:-3]+'RCM'
+            if os.path.exists(rcmfilename): os.rename(rcmfilename, os.path.join(dest_dirname, rcmfilename))
+            trtfilename = filepath[:-3]+'trt'
+            if os.path.exists(trtfilename): os.rename(trtfilename, os.path.join(dest_dirname, trtfilename))
+            if os.path.exists('dark0.dat'): os.rename('dark0.dat', os.path.join(dest_dirname, 'dark0.dat'))
         except:
-            print('Warning: could not move the original file(s) to the `orig` directory')
+            print('Warning: could not move the original file %s to the `orig` directory in %s' % (dirname, filename))
 
