@@ -7,7 +7,8 @@ Converts ROH files of the Avantes spectrometer using the 'kaitai' parser.
 The amplitude curve is divided by the experimental spectrum of a calibration
 lamp, and multiplied by the manufacturer-supplied spectrum thereof. This 
 suppresses the spectrometer nonuniformity. You may wish to edit this file
-if the calibration changes. Pass the '--raw' parameter to get uncalibrated data. 
+if the calibration changes. Pass the '--raw' parameter to disable the 
+calibration curve and the removal of outliers.
 
 Finally, the original ROH and RCM files are moved into a new 'orig' directory 
 and a human-readable data file is left. Pass the '--keeporig' parameter to 
@@ -87,7 +88,7 @@ for filepath in [ff for ff in sys.argv[1:] if ff[0:1] != '-']:
     if not keepsec:
         spec -= np.interp(x, x*2, spec*secondorderampli)      ## subtract the second-order grating artifact
 
-    if not keepoutliers:
+    if not keepoutliers and not israw:
         kernel = [1,0,1] # averaging of neighbors #kernel = np.exp(-np.linspace(-2,2,5)**2) ## Gaussian
         kernel /= np.sum(kernel)                        # normalize
         smooth = np.convolve(spec, kernel, mode='same')    # find the average value of neighbors
