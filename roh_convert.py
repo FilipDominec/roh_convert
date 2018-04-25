@@ -97,6 +97,7 @@ for filepath in [ff for ff in sys.argv[1:] if ff[0:1] != '-']:
         smooth2 = np.convolve(spec, kernel2, mode='same')    # find the average value of neighbors
         rms_noise = np.average((spec[1:]-spec[:-1])**2)**.5   # estimate what the average noise is (rms derivative)
         where_excess =  (np.abs(spec-smooth) > rms_noise*1)    # find all points with difference from average more than 3sigma
+        where_excess = where_excess[1:-1]                   # exclude the starting and ending point from outliers - they do not have 2 neighbors anyway
         print("    removing {} outliers".format(len(where_excess)))
         spec[where_excess] = smooth2[where_excess]
         #where_not_excess =  (np.abs(spec-smooth) < rms_noise*3)    # find all points with difference from average less than 3sigma
