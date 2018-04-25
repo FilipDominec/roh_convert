@@ -77,16 +77,6 @@ for filepath in [ff for ff in sys.argv[1:] if ff[0:1] != '-']:
 
     spec = np.array(my_roh.spectrum)                          ## load the y-axis of the spectrum
 
-    if not israw:
-        kernel = [1]*(1+int(my_roh.pixel_smoothing)*2)     # averaging of neighboring pixels is needed also for the calibration curve
-        kernel /= np.sum(kernel)                        # normalize the kernel
-        print('    applying calibration curve, smoothed by kernel', kernel)
-        smooth_divide = np.convolve(divide_spectrum(), kernel, mode='same')    # find the average value of neighbors
-        spec /= smooth_divide                             ## divide by the grating+CCD response
-
-        spec /= my_roh.integration_ms                             ## divide by the integration time
-        #spec *= multiply_spectrum(x)                   ## normalize to the spectral lamp XX included in calibration curve, 
-
 
     if not keepoutliers and not israw:
         kernel = [1,0,1] # averaging of neighbors #kernel = np.exp(-np.linspace(-2,2,5)**2) ## Gaussian
@@ -102,6 +92,17 @@ for filepath in [ff for ff in sys.argv[1:] if ff[0:1] != '-']:
         spec[where_excess] = smooth2[where_excess]
         #where_not_excess =  (np.abs(spec-smooth) < rms_noise*3)    # find all points with difference from average less than 3sigma
         #x, spec = x[where_not_excess], spec[where_not_excess]   # filter the data - WRONG, leads to uneven length of spectra
+
+    if not israw:
+        kernel = [1]*(1+int(my_roh.pixel_smoothing)*2)     # averaging of neighboring pixels is needed also for the calibration curve
+        kernel /= np.sum(kernel)                        # normalize the kernel
+        print('    applying calibration curve, smoothed by kernel', kernel)
+        smooth_divide = np.convolve(divide_spectrum(), kernel, mode='same')    # find the average value of neighbors
+        spec /= smooth_divide                             ## divide by the grating+CCD response
+
+        spec /= my_roh.integration_ms                             ## divide by the integration time
+        #spec *= multiply_spectrum(x)                   ## normalize to the spectral lamp XX included in calibration curve, 
+
 
     if not keepsec:
         print('    subtracting second order with ratio ', secondorderampli) 
