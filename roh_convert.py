@@ -34,6 +34,7 @@ Written by Filip Dominec, 2017, dominecf@fzu.cz
 Released under the MIT license
 """
 
+        ## FIXME with some UV-data
 secondorderampli = 178./12900 + 322./4348 - 300./3176  #- 217./6307     # subtraction of 2nd order artifacts; set to 0 to disable
 
 
@@ -74,10 +75,6 @@ for filepath in [ff for ff in sys.argv[1:] if ff[0:1] != '-']:
     print('    averaging       = ', my_roh.averaging      )
     print('    pixel_smoothing = ', my_roh.pixel_smoothing)
 
-      
-      
-      
-
     spec = np.array(my_roh.spectrum)                          ## load the y-axis of the spectrum
 
     if not israw:
@@ -90,11 +87,6 @@ for filepath in [ff for ff in sys.argv[1:] if ff[0:1] != '-']:
         spec /= my_roh.integration_ms                             ## divide by the integration time
         #spec *= multiply_spectrum(x)                   ## normalize to the spectral lamp XX included in calibration curve, 
 
-
-                                                        ##   see also https://gist.github.com/FilipDominec/2aa3af9f558483a25b04628e60bdf7e7
-    if not keepsec:
-        print('    subtracting second order with ratio ', secondorderampli)
-        spec -= np.interp(x, x*2, spec*secondorderampli)      ## subtract the second-order grating artifact
 
     if not keepoutliers and not israw:
         kernel = [1,0,1] # averaging of neighbors #kernel = np.exp(-np.linspace(-2,2,5)**2) ## Gaussian
@@ -110,11 +102,17 @@ for filepath in [ff for ff in sys.argv[1:] if ff[0:1] != '-']:
         #where_not_excess =  (np.abs(spec-smooth) < rms_noise*3)    # find all points with difference from average less than 3sigma
         #x, spec = x[where_not_excess], spec[where_not_excess]   # filter the data - WRONG, leads to uneven length of spectra
 
+    if not keepsec:
+        print('    subtracting second order with ratio ', secondorderampli) 
+        spec -= np.interp(x, x*2, spec*secondorderampli)      ## subtract the second-order grating artifact
+                                                        ##   see also https://gist.github.com/FilipDominec/2aa3af9f558483a25b04628e60bdf7e7
+
+
     try: 
         with open(filepath[:-4]+".RCM") as commentfile:
             comment = commentfile.read().strip()[3:]
             header = "\nuser_comment=%s" % comment      ## save the user-supplied comment, if possible
-            print(comment)
+            print('    naming the file with comment = ', comment)
     except:
         header = "original_filename=%s" % filepath      ## if no RCM file found, include the file name in the header instead
         comment = ''
