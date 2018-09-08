@@ -83,9 +83,8 @@ for filepath in [ff for ff in sys.argv[1:] if ff[0:1] != '-']:
         print('    applying calibration curve, smoothed by kernel', kernel)
         smooth_divide = np.convolve(divide_spectrum(), kernel, mode='same')    # find the average value of neighbors
         spec /= smooth_divide                             ## divide by the grating+CCD response
-
         spec /= my_roh.integration_ms                             ## divide by the integration time
-        #spec *= multiply_spectrum(x)                   ## normalize to the spectral lamp XX included in calibration curve, 
+        spec *= multiply_spectrum(x)                   ## normalize to the spectral lamp XX included in calibration curve, 
 
 
     if not keepoutliers and not israw:
